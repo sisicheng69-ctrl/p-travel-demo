@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>P 人旅行助手 Demo</title>
+<style>
+:root{
+  --bg:#f7f8f4;
+  --card:#ffffff;
+  --panel:#f1f3ee;
+  --text:#1c211b;
+  --muted:#6f766e;
+  --border:#e4e7df;
+  --accent:#2f6b4f;
+  --accent-bg:#e9f3ed;
+  --shadow:0 10px 30px rgba(32,48,38,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,select{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 48px}
+.hero{
+  border:1px solid var(--border);
+  border-radius:30px;
+  padding:28px;
+  background:
+    radial-gradient(circle at 86% 18%, rgba(124,168,142,.22), transparent 30%),
+    radial-gradient(circle at 10% 88%, rgba(220,195,142,.18), transparent 28%),
+    #f3f5ef;
+}
+.top{display:flex;gap:24px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.badges{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+.badge{background:white;border:1px solid var(--border);border-radius:999px;padding:7px 11px;font-weight:700;font-size:12px}
+h1{font-size:48px;line-height:1.12;margin:16px 0 10px;letter-spacing:-1.5px;max-width:720px}
+.subtitle{font-size:15px;line-height:1.8;color:var(--muted);max-width:650px}
+.freedom{background:rgba(255,255,255,.82);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:22px;padding:16px 18px;min-width:190px;text-align:right}
+.freedom strong{font-size:30px;display:block;margin:4px 0}
+.grid{display:grid;grid-template-columns:.82fr 1.18fr;gap:18px;margin-top:26px}
+.card{background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:26px;padding:20px}
+.section-title{font-weight:800;font-size:17px}
+.section-note{color:var(--muted);font-size:13px;margin-top:5px}
+.moods{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:16px}
+.mood{border:1px solid var(--border);border-radius:17px;padding:12px;background:white;cursor:pointer;transition:.18s}
+.mood:hover{transform:translateY(-1px)}
+.mood.active{border-color:var(--accent);background:var(--accent-bg);box-shadow:inset 0 0 0 1px var(--accent)}
+.mood .emoji{font-size:22px}.mood b{display:block;font-size:14px;margin-top:5px}.mood small{display:block;color:var(--muted);margin-top:3px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+label{font-size:12px;font-weight:700;color:var(--muted)}
+select{width:100%;margin-top:7px;border:1px solid var(--border);background:white;border-radius:13px;padding:12px;color:var(--text)}
+.primary{width:100%;border:0;border-radius:15px;background:var(--accent);color:white;font-weight:800;padding:14px;margin-top:14px}
+.next-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.kicker{font-size:11px;letter-spacing:.18em;font-weight:800;color:var(--muted)}
+.state{border:1px solid var(--border);border-radius:999px;padding:7px 10px;font-size:12px;background:white}
+.trip{border:1px solid var(--border);border-radius:22px;padding:16px;margin-top:12px;background:white;transition:.18s}
+.trip:hover{transform:translateY(-2px);border-color:#b7c7bc}
+.trip.selected{border:2px solid var(--accent)}
+.trip-row{display:flex;gap:14px}
+.icon{width:58px;height:58px;border-radius:18px;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.trip h3{margin:0;font-size:16px}.trip p{margin:7px 0 0;color:var(--muted);font-size:14px;line-height:1.6}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
+.tag{border:1px solid var(--border);border-radius:999px;padding:5px 9px;font-size:11px;background:#fff}
+.choice{margin-top:12px;border:1px solid var(--border);border-radius:12px;padding:10px 13px;background:white;font-weight:700}
+.trip.selected .choice{background:var(--accent);color:white;border-color:var(--accent)}
+.current{display:none;margin-top:18px;background:white;border:1px solid var(--border);border-radius:24px;padding:18px;box-shadow:var(--shadow)}
+.current.show{display:block}
+.current-row{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.current-name{font-size:21px;font-weight:800;margin-top:5px}
+.current-meta{font-size:13px;color:var(--muted);margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:1px solid var(--border);border-radius:12px;background:white;padding:11px 13px;font-weight:700}
+.action.primary-mini{background:var(--accent);color:white;border-color:var(--accent)}
+.promise{margin-top:14px;background:var(--panel);border-radius:16px;padding:13px;font-size:13px;line-height:1.7}
+.toast{display:none;margin-top:14px;background:white;border:1px solid var(--border);border-radius:16px;padding:13px;font-size:13px;line-height:1.7}
+.toast.show{display:block}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
+@media(max-width:820px){
+  h1{font-size:37px}
+  .grid{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .hero{padding:18px}
+  h1{font-size:31px}
+  .moods{grid-template-columns:repeat(2,1fr)}
+  .controls{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="top">
+      <div>
+        <div class="badges"><span class="badge">P MODE ON</span><span>上海 · 周六 14:20</span></div>
+        <h1>今天不用做攻略，<br>随便一点也很好。</h1>
+        <div class="subtitle">告诉我你现在的心情。不是给你一张排满的日程表，而是只决定“下一站”。计划随时可以改，改变本身就是旅行的一部分。</div>
+      </div>
+      <div class="freedom"><span style="font-size:12px;color:var(--muted)">今日自由度</span><strong>86%</strong><span style="font-size:12px;color:var(--muted)">还有很多空间可以临时改变</span></div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="section-title">你现在想怎么过？</div>
+        <div class="section-note">不用想太久，选最接近此刻状态的。</div>
+        <div class="moods" id="moods">
+          <div class="mood active" data-mood="随便逛逛"><span class="emoji">🚶</span><b>随便逛逛</b><small>不赶时间</small></div>
+          <div class="mood" data-mood="吃吃喝喝"><span class="emoji">🍜</span><b>吃吃喝喝</b><small>美食优先</small></div>
+          <div class="mood" data-mood="拍照打卡"><span class="emoji">📷</span><b>想拍点照片</b><small>出片优先</small></div>
+          <div class="mood" data-mood="今天很累"><span class="emoji">🛋️</span><b>今天很累</b><small>低能量模式</small></div>
+          <div class="mood" data-mood="想看风景"><span class="emoji">🌆</span><b>想看风景</b><small>慢慢走走</small></div>
+          <div class="mood" data-mood="临时起意"><span class="emoji">✨</span><b>临时起意</b><small>随机一点</small></div>
+        </div>
+
+        <div class="controls">
+          <label>预算
+            <select id="budget"><option>¥100 内</option><option selected>¥300 左右</option><option>预算随意</option></select>
+          </label>
+          <label>还有多久
+            <select id="duration"><option>1 小时</option><option selected>3 小时</option><option>整个下午</option></select>
+          </label>
+        </div>
+        <button class="primary" id="decide">帮我决定下一站 →</button>
+      </div>
+
+      <div class="card">
+        <div class="next-head">
+          <div><div class="kicker">NEXT CHOICE</div><div class="section-title" style="font-size:21px;margin-top:5px">不用选最优，选现在最想去的</div></div>
+          <div class="state" id="state">随便逛逛 · ¥300 · 3 小时</div>
+        </div>
+
+        <div class="trip selected" data-plan="武康路慢慢逛" data-meta="2–3 小时 · 轻松 · 随时可停">
+          <div class="trip-row"><div class="icon">🌿</div><div>
+            <h3>武康路慢慢逛</h3><p>不设打卡清单，边走边看。喜欢哪家店就进去，不喜欢就继续走。</p>
+            <div class="tags"><span class="tag">2–3 小时</span><span class="tag">约 ¥80–150</span><span class="tag">步行友好</span></div>
+            <button class="choice">就去这里</button>
+          </div></div>
+        </div>
+
+        <div class="trip" data-plan="找个展馆慢慢看" data-meta="约 2 小时 · 室内 · 不费脑">
+          <div class="trip-row"><div class="icon">🏛️</div><div>
+            <h3>找个展馆慢慢看</h3><p>天气一般或者不想走太多路的时候，更适合待在室内。</p>
+            <div class="tags"><span class="tag">约 2 小时</span><span class="tag">¥0–80</span><span class="tag">室内</span></div>
+            <button class="choice">选这个</button>
+          </div></div>
+        </div>
+
+        <div class="trip" data-plan="先找地方坐一会儿" data-meta="完全自由 · 低能量 · 随时再决定">
+          <div class="trip-row"><div class="icon">☕</div><div>
+            <h3>先找地方坐一会儿</h3><p>旅行不是 KPI。先休息，等想动的时候再决定下一站。</p>
+            <div class="tags"><span class="tag">完全自由</span><span class="tag">¥30–70</span><span class="tag">回血</span></div>
+            <button class="choice">今天松弛点</button>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="current" id="current">
+    <div class="current-row">
+      <div><div style="font-size:12px;color:var(--muted)">● 当前计划</div><div class="current-name" id="currentName"></div><div class="current-meta" id="currentMeta"></div></div>
+      <div class="actions"><button class="action" id="insert">✨ 临时插一个</button><button class="action primary-mini" id="cancel">我不想去了</button></div>
+    </div>
+    <div class="promise"><b>P 人承诺：</b>计划可以随时推翻。你不用为“没按计划走”负责，APP 负责重新接住后面的行程。</div>
+  </section>
+  <div class="toast" id="toast"></div>
+  <div class="footer">P 人旅行助手 · 产品概念 Demo</div>
+</div>
+
+<script>
+let mood="随便逛逛";
+const moods=[...document.querySelectorAll(".mood")], state=document.getElementById("state"), toast=document.getElementById("toast");
+function say(t){toast.textContent=t;toast.classList.add("show")}
+moods.forEach(x=>x.addEventListener("click",()=>{moods.forEach(y=>y.classList.remove("active"));x.classList.add("active");mood=x.dataset.mood}));
+document.getElementById("decide").addEventListener("click",()=>{
+  const b=document.getElementById("budget").value.replace(" 左右",""), d=document.getElementById("duration").value;
+  state.textContent=`${mood} · ${b} · ${d}`;
+  const map={"今天很累":"已切换到低能量模式：减少步行和选择，优先休息与室内场景。","吃吃喝喝":"已切换到吃喝模式：下一站优先好吃、好坐、不赶时间。","拍照打卡":"已切换到拍照模式：优先推荐更适合出片的路线。","想看风景":"已切换到风景模式：少打卡，多留一点发呆时间。","临时起意":"已开启随缘模式：不给固定路线，只给此刻几个不错的选择。"};
+  say(map[mood]||"已重新生成下一站选择。今天不用把后面都想清楚。");
+});
+document.querySelectorAll(".choice").forEach(btn=>btn.addEventListener("click",()=>{
+  const trip=btn.closest(".trip");
+  document.querySelectorAll(".trip").forEach(x=>x.classList.remove("selected")); trip.classList.add("selected");
+  document.getElementById("currentName").textContent=trip.dataset.plan;
+  document.getElementById("currentMeta").textContent=trip.dataset.meta;
+  document.getElementById("current").classList.add("show");
+  say("安排好了。先去这一站，后面的事等到了再说。");
+}));
+document.getElementById("cancel").addEventListener("click",()=>{
+  document.getElementById("currentName").textContent="原计划已取消 · 等你下一次想动";
+  document.getElementById("currentMeta").textContent="没有“行程失败”，只有临时改变";
+  say("没关系。已经释放原来的计划，接下来可以重新选，也可以什么都不做。");
+});
+document.getElementById("insert").addEventListener("click",()=>say("临时发现一家想去的咖啡店：可以直接插入，后续行程自动顺延约 35 分钟，不需要你重新排。"));
+</script>
+</body>
+</html>
