@@ -16,21 +16,6 @@ P 型用户并不是完全不需要计划，而是不希望被过度细致的计
 
 直接双击 `index.html` 即可打开。
 
-## 使用 GitHub Pages 发布
-
-1. 在 GitHub 新建一个公开仓库，例如 `p-travel-demo`
-2. 将本项目中的全部文件上传到仓库根目录
-3. 打开仓库 `Settings`
-4. 进入 `Pages`
-5. 在 `Build and deployment` 中选择 `Deploy from a branch`
-6. Branch 选择 `main`，目录选择 `/ (root)`
-7. 保存
-
-稍等片刻后，可通过：
-
-`https://<你的GitHub用户名>.github.io/p-travel-demo/`
-
-访问。
 
 ## 文件结构
 
